@@ -1,4 +1,7 @@
 import express from 'express'
+
+import {authenticationMiddleware} from './middlewares/auth.middleware.js'
+
 import { urlencoded } from 'express'
 
 import userRouter from './routes/user.routes.js'
@@ -9,6 +12,7 @@ const PORT = process.env.PORT ?? 8000
 
 app.use(express.json())
 app.use(urlencoded({extended: true}))
+app.use(authenticationMiddleware)
 
 app.use('/user', userRouter)
 
