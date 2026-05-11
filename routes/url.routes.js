@@ -8,12 +8,14 @@ import {ensureAuthenticated} from '../middlewares/auth.middleware.js'
 
 import {nanoid} from 'nanoid'
 import { urlToHttpOptions } from 'node:url'
+import {eq} from 'drizzle-orm'
 
 //services
 
 import {addShortCodeUrls} from '../services/url.service.js'
 
 const router = express.Router()
+
 
 router.post('/shorten', ensureAuthenticated, async function (req, res) {
 
@@ -38,5 +40,19 @@ router.post('/shorten', ensureAuthenticated, async function (req, res) {
     })
 
 })
+
+router.get('/:shortCode', async function (req, res) {
+    const code = req.params.shortCode
+    const [result] = await db.select({
+        target: urlsTable.target
+        }).from(urlsTable).where(eq(urlsTable.shortCode, code))
+
+        
+    if(!result) {
+        return res.status(401).json({error: 'Invalid URL'})
+    }
+
+    return res.redirect(result.target)
+    })
 
 export default router 
