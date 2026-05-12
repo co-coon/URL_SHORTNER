@@ -12,7 +12,7 @@ import {eq} from 'drizzle-orm'
 
 //services
 
-import {addShortCodeUrls} from '../services/url.service.js'
+import {addShortCodeUrls, fetchUserCodes} from '../services/url.service.js'
 
 const router = express.Router()
 
@@ -42,10 +42,14 @@ router.post('/shorten', ensureAuthenticated, async function (req, res) {
 })
 
 router.get('/codes', ensureAuthenticated, async function (req, res) {
-    const codes = await db
-    .select()
-    .from(urlsTable)
-    .where(eq(urlsTable.userId, req.user.id))
+    // const codes = await db
+    // .select()
+    // .from(urlsTable)
+    // .where(eq(urlsTable.userId, req.user.id))
+
+    // const userId = req.user.id
+
+    const codes = await fetchUserCodes(req.user.id)
 
     return res.json(codes)
 })
